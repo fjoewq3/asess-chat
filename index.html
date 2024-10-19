@@ -13,8 +13,18 @@
     #input { flex: 1; padding: 8px; }
     #send { padding: 8px; }
   </style>
+  <style>
+        /* Hide the chat by default */
+        #chat { 
+            display: none; 
+        }
+    </style>
 </head>
 <body>
+   <div id="password-section">
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="checkPassword()">Enter</button>
+    </div>
   <ul id="messages"></ul>
   <form id="form" action="">
     <input id="input" autocomplete="off" placeholder="Type a message..." /><button id="send">Send</button>
@@ -43,6 +53,33 @@
       document.getElementById('messages').appendChild(item);
       window.scrollTo(0, document.body.scrollHeight);
     });
+
+    const socket = io();
+
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            const correctPassword = 'Cheesydibblesandlemonjuice1'; // Replace with your desired password
+
+            if (password === correctPassword) {
+                // If the password is correct, show the chat and hide the password section
+                document.getElementById('password-section').style.display = 'none';
+                document.getElementById('chat').style.display = 'block';
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            socket.emit('chat message', message);
+            document.getElementById('message').value = '';
+        }
+
+        socket.on('chat message', (msg) => {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            document.getElementById('messages').appendChild(item);
+        });
   </script>
 </body>
 </html>
